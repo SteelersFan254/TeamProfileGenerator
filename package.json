@@ -1,0 +1,23 @@
+{
+  "name": "teamprofilegenerator",
+  "version": "1.0.0",
+  "description": "Homework",
+  "main": "index.js",
+  "dependencies": {
+    "inquirer": "^7.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteelersFan254/TeamProfileGenerator.git"
+  },
+  "author": "Ryan Borja",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteelersFan254/TeamProfileGenerator/issues"
+  },
+  "homepage": "https://github.com/SteelersFan254/TeamProfileGenerator#readme"
+}
