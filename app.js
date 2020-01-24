@@ -46,8 +46,8 @@ const managerQuestions = [
 async function makeTeam() {
     inquirer
         .prompt(managerQuestions)
-        .then(async function (managerResponse) {
-            var { managerName, managerId, managerEmail, managerOffice, engineers, interns } = managerResponse;
+        .then(async function (manageresponse) {
+            var { managerName, managerId, managerEmail, managerOffice, engineers, interns } = manageresponse;
             let makeManager = new Manager(managerName, managerId, managerEmail, managerOffice);
 
             var engineerArray = [];
@@ -121,13 +121,48 @@ async function makeTeam() {
             // console.log(internArray);
             var { name, id, email, officeNumber, role } = makeManager
 
-            let mgrCard = fs.readFileSync('./templates/manger.html', 'utf8');
-            mgrCard = mgrCard.replace('{{name}}', name);
-            mgrCard = mgrCard.replace('{{id}}', id);
-            mgrCard = mgrCard.replace('{{email}}', email);
-            mgrCard = mgrCard.replace('{{officeNumber}}', officeNumber);
-            mgrCard = mgrCard.replace('{{role}}', role);
-            console.log(mgrCard)
+
+            let managerCard = fs.readFileSync('./templates/manger.html', 'utf8');
+            managerCard = managerCard.replace('{{name}}', name);
+            managerCard = managerCard.replace('{{id}}', id);
+            managerCard = managerCard.replace('{{email}}', email);
+            managerCard = managerCard.replace('{{officeNumber}}', officeNumber);
+            managerCard = managerCard.replace('{{role}}', role);
+            console.log(managerCard)
+
+            var htmlEngineerArray = []
+            for (i = 0; i < engineerArray.length; i++) {
+                var { name, id, email, gitHub, role } = engineerArray[i];
+
+                let engineerCard = fs.readFileSync('./templates/manger.html', 'utf8');
+                engineerCard = engineerCard.replace('{{name}}', name);
+                engineerCard = engineerCard.replace('{{id}}', id);
+                engineerCard = engineerCard.replace('{{email}}', email);
+                engineerCard = engineerCard.replace('{{github}}', gitHub);
+                engineerCard = engineerCard.replace('{{role}}', role);
+                htmlEngineerArray.push(engineerCard)
+            }
+
+            var htmlInternArray = []
+            for (i = 0; i < internArray.length; i++) {
+                var { name, id, email, gitHub, school } = internArray[i];
+
+                let internCard = fs.readFileSync('./templates/manger.html', 'utf8');
+                internCard = internCard.replace('{{name}}', name);
+                internCard = internCard.replace('{{id}}', id);
+                internCard = internCard.replace('{{email}}', email);
+                internCard = internCard.replace('{{school}}', school);
+                internCard = internCard.replace('{{role}}', role);
+                htmlInternArray.push(internCard)
+
+            }
+            let mainHtml = fs.readFileSync('./templates/index.html', 'utf8');
+            mainHtml = mainHtml.replace('{{manager}}', managerCard);
+            mainHtml = mainHtml.replace('{{engineers}}', htmlEngineerArray);
+            mainHtml = mainHtml.replace('{{interns}}', htmlInternArray);
+
+            fs.writeFileSync('.outputs.html', mainHtml);
+
 
         });
 
