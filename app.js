@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const employee = require("./lib/employee.js")
+const Manager = require("./lib/manager.js")
 
 // const fs = require("fs");
 // const generateHTML = require("generateHTML.js")
@@ -45,8 +45,10 @@ const managerQuestions = [
 inquirer
     .prompt(managerQuestions)
     .then(async function (managerResponse) {
-        let makeManager = new employee.Employee(managerResponse);
-
+        var { managerName, managerId, managerEmail, managerOffice, engineers, interns } = managerResponse;
+        let makeManager = new Manager(managerName, managerId, managerEmail, managerOffice);
+        console.log(makeManager, engineers, interns)
+        // console.log(makeManager);
         // console.log(managerResponse)
         // console.log(managerResponse.engineers)
     //     let NumOfEngineers = managerResponse.engineers;
