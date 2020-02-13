@@ -134,7 +134,7 @@ async function makeTeam() {
             for (i = 0; i < engineerArray.length; i++) {
                 var { name, id, email, gitHub, role } = engineerArray[i];
 
-                let engineerCard = fs.readFileSync('./templates/manger.html', 'utf8');
+                let engineerCard = fs.readFileSync('./templates/engineer.html', 'utf8');
                 engineerCard = engineerCard.replace('{{name}}', name);
                 engineerCard = engineerCard.replace('{{id}}', id);
                 engineerCard = engineerCard.replace('{{email}}', email);
@@ -147,7 +147,7 @@ async function makeTeam() {
             for (i = 0; i < internArray.length; i++) {
                 var { name, id, email, gitHub, school } = internArray[i];
 
-                let internCard = fs.readFileSync('./templates/manger.html', 'utf8');
+                let internCard = fs.readFileSync('./templates/intern.html', 'utf8');
                 internCard = internCard.replace('{{name}}', name);
                 internCard = internCard.replace('{{id}}', id);
                 internCard = internCard.replace('{{email}}', email);
