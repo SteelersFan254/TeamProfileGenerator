@@ -1,170 +1,197 @@
-const inquirer = require("inquirer");
-const Manager = require("./lib/manager.js")
-const Engineer = require("./lib/engineer.js")
-const Intern = require("./lib/intern.js")
-
+//================
+//Dependencies
+//================
 const fs = require("fs");
-// const generateHTML = require("generateHTML.js")
-const managerQuestions = [
+const inquirer = require("inquirer");
+const util = require("util");
+
+//==========================
+//Promises
+//==========================
+const writeFileAsync = util.promisify(fs.writeFileSync);
+
+//============================
+//attach classes for employees
+//============================
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+const Manager = require("./lib/Manager");
+
+//===========================================
+//Variables to store information from function
+//===========================================
+const teamMembers = [];
+let teamName;
+let manager;
+
+//============================
+//questions
+//============================
+managerQuestions = [{
+        type: "input",
+        message: "Let's start a project. What is the team name?",
+        name: "teamname",
+    },
     {
         type: "input",
-        message: "Hello. You are the manager of a new software engineering team. What is your name?",
-        name: "managerName",
-        // validate: confirmName()
-    },
-    {
-        type: "number",
-        message: "What is the manager's ID?",
-        name: "managerId",
-        // validate: confirmNumber()
+        message: "Who is the Manager of this project",
+        name: "managername"
     },
     {
         type: "input",
-        message: "What is the manager's email address?",
-        name: "managerEmail",
-        // validate: confirmEmail()
+        message: "What is the Manager's ID?",
+        name: "managerid",
     },
     {
-        type: "number",
-        message: "What is the manager's office number?",
-        name: "managerOffice",
-        // validate: confirmOfficeNumber()
+        type: "input",
+        message: "What is the Manager's Email?",
+        name: "manageremail",
     },
     {
-        type: "number",
-        message: "How many engineers are a part of this team?",
-        name: "engineers",
-        // validate: confirmEngineersNum()
-    },
-    {
-        type: "number",
-        message: "How many interns are a part of this team?",
-        name: "interns",
-        // validate: confirmInternsNum()
+        type: "input",
+        message: "What is the Manager's Office Number?",
+        name: "officenumber",
     }
 ]
-async function makeTeam() {
-    inquirer
-        .prompt(managerQuestions)
-        .then(async function (manageresponse) {
-            var { managerName, managerId, managerEmail, managerOffice, engineers, interns } = manageresponse;
-            let makeManager = new Manager(managerName, managerId, managerEmail, managerOffice);
 
-            var engineerArray = [];
-            for (i = 0; i < engineers; i++) {
-                await inquirer
-                    .prompt([
-                        {
-                            type: "input",
-                            message: `What is engineer ${i + 1}'s name?`,
-                            name: "engineerName"
-                        },
-                        {
-                            type: "number",
-                            message: `What is engineer ${i + 1}'s ID?`,
-                            name: "engineerId"
-                        },
-                        {
-                            type: "input",
-                            message: `What is engineer ${i + 1}'s email?`,
-                            name: "engineerEmail"
-                        },
-                        {
-                            type: "input",
-                            message: `What is engineer ${i + 1}'s github username?`,
-                            name: "engineerGithub"
-                        }
-                    ])
-                    .then(function (engineerResponse) {
-
-                        var { engineerName, engineerId, engineerEmail, engineerGitHub } = engineerResponse;
-
-                        var makeEngineer = new Engineer(engineerName, engineerId, engineerEmail, engineerGitHub)
-
-                        engineerArray.push(makeEngineer)
-                    })
-            };
-            var internArray = []
-            for (j = 0; j < interns; j++) {
-                await inquirer
-                    .prompt([
-                        {
-                            type: "input",
-                            message: `What is intern ${j + 1}'s name?`,
-                            name: "internName"
-                        },
-                        {
-                            type: "number",
-                            message: `What is intern ${j + 1}'s ID?`,
-                            name: "internId"
-                        },
-                        {
-                            type: "input",
-                            message: `What is intern ${j + 1}'s email?`,
-                            name: "internEmail"
-                        },
-                        {
-                            type: "input",
-                            message: `What is intern ${j + 1}'s school affiliation?`,
-                            name: "internSchool"
-                        }
-                    ]).then(function (internResponse) {
-                        var { internName, internId, internEmail, internSchool } = internResponse;
-
-                        var makeIntern = new Intern(internName, internId, internEmail, internSchool)
-
-                        internArray.push(makeIntern)
-                    })
-            }
-            // console.log(makeManager);
-            // console.log(engineerArray);
-            // console.log(internArray);
-            var { name, id, email, officeNumber, role } = makeManager
+teamQuestions = [{
+        type: "list",
+        message: "Who would you like to add to the team?",
+        choices: ["Engineer", "Intern"],
+        name: "role",
+    },
+    {
+        type: "input",
+        message: "What is the employee's name?",
+        name: "employeename",
+    },
+    {
+        type: "input",
+        message: "What is the employee's ID?",
+        name: "employeeid",
+    },
+    {
+        type: "input",
+        message: "What is the employee's Email?",
+        name: "employeeemail",
+    },
+    {
+        type: "input",
+        message: "What is your engineer's GitHub user-name?",
+        when: (userResponse) => userResponse.role === "Engineer",
+        name: "github",
+    },
+    {
+        type: "input",
+        message: "Which university is your Intern attending?",
+        when: (userResponse) => userResponse.role === "Intern",
+        name: "school",
+    },
+    {
+        type: "confirm",
+        message: "Would you like to add another employee to the team?",
+        name: "additonalmember"
+    },
+]
 
 
-            let managerCard = fs.readFileSync('./templates/manger.html', 'utf8');
-            managerCard = managerCard.replace('{{name}}', name);
-            managerCard = managerCard.replace('{{id}}', id);
-            managerCard = managerCard.replace('{{email}}', email);
-            managerCard = managerCard.replace('{{officeNumber}}', officeNumber);
-            managerCard = managerCard.replace('{{role}}', role);
-            console.log(managerCard)
+//=================================
+//functions to create employee data
+//=================================
+function init() {
+    inquirer.prompt(managerQuestions)
+        .then(managerResponse => {
+            teamName = managerResponse.teamname;
+            const managerName = managerResponse.managername;
+            const managerId = managerResponse.managerid;
+            const managerEmail = managerResponse.manageremail;
+            const officeNumber = managerResponse.officenumber;
 
-            var htmlEngineerArray = []
-            for (i = 0; i < engineerArray.length; i++) {
-                var { name, id, email, gitHub, role } = engineerArray[i];
-
-                let engineerCard = fs.readFileSync('./templates/engineer.html', 'utf8');
-                engineerCard = engineerCard.replace('{{name}}', name);
-                engineerCard = engineerCard.replace('{{id}}', id);
-                engineerCard = engineerCard.replace('{{email}}', email);
-                engineerCard = engineerCard.replace('{{github}}', gitHub);
-                engineerCard = engineerCard.replace('{{role}}', role);
-                htmlEngineerArray.push(engineerCard)
-            }
-
-            var htmlInternArray = []
-            for (i = 0; i < internArray.length; i++) {
-                var { name, id, email, gitHub, school } = internArray[i];
-
-                let internCard = fs.readFileSync('./templates/intern.html', 'utf8');
-                internCard = internCard.replace('{{name}}', name);
-                internCard = internCard.replace('{{id}}', id);
-                internCard = internCard.replace('{{email}}', email);
-                internCard = internCard.replace('{{school}}', school);
-                internCard = internCard.replace('{{role}}', role);
-                htmlInternArray.push(internCard)
-
-            }
-            let mainHtml = fs.readFileSync('./templates/index.html', 'utf8');
-            mainHtml = mainHtml.replace('{{manager}}', managerCard);
-            mainHtml = mainHtml.replace('{{engineers}}', htmlEngineerArray);
-            mainHtml = mainHtml.replace('{{interns}}', htmlInternArray);
-
-            fs.writeFileSync('.outputs.html', mainHtml);
-
-
-        });
-
+            //create a new manager and add them to teamMember array
+            manager = new Manager(managerName, managerId, managerEmail, officeNumber);
+            teamData();
+        })
 }
-makeTeam();
+
+function teamData() {
+    inquirer.prompt(teamQuestions)
+        .then(userResponse => {
+            const role = userResponse.role;
+            const employeeName = userResponse.employeename;
+            const employeeId = userResponse.employeeid;
+            const employeeEmail = userResponse.employeeemail;
+            const github = userResponse.github;
+            const school = userResponse.school;
+            const additonalMember = userResponse.additonalmember;
+
+            //create either new engineer or intern
+            if (role === "Engineer") {
+                const engineer = new Engineer(employeeName, employeeId, employeeEmail, github);
+                teamMembers.push(engineer);
+            } else if (role === "Intern") {
+                const intern = new Intern(employeeName, employeeId, employeeEmail, school);
+                teamMembers.push(intern);
+            }
+
+            //create a statment that lets the function run for as many members the team needs
+            if (additonalMember === true) {
+                teamData();
+            } else {
+                //render manager
+                renderManagerCard(manager);
+
+                //render team
+                for (var i = 0; i < teamMembers.length; i++) {
+                    let employee = teamMembers[i];
+                    cards += renderEmployeeCard(employee);
+                }
+
+                //read main html and place employee cards into main html
+                let main = fs.readFileSync("./html-templates/main.html", "utf8");
+                main = main.replace(/{{teamTitle}}/g, teamName);
+                main = main.replace("{{cards}}", cards);
+
+                //Write new html and create path to output folder
+                writeFileAsync("./output/teampage.html", main);
+            }
+        })
+}
+
+//=========================
+//functions to render data
+//========================
+
+//render manager card
+function renderManagerCard(manager) {
+    let managerCard = fs.readFileSync("./html-templates/manager.html", "utf8");
+    managerCard = managerCard.replace("{{name}}", manager.getName());
+    managerCard = managerCard.replace("{{role}}", manager.getRole());
+    managerCard = managerCard.replace("{{id}}", manager.getId());
+    managerCard = managerCard.replace("{{email}}", manager.getEmail());
+    managerCard = managerCard.replace("{{officeNumber}}", manager.getOfficeNumber());
+    cards = managerCard;
+    return cards
+}
+
+//render employee cards
+function renderEmployeeCard(employee) {
+    if (employee.getRole() === "Engineer") {
+        let engineerCard = fs.readFileSync("./html-templates/engineer.html", "utf8");
+        engineerCard = engineerCard.replace("{{name}}", employee.getName());
+        engineerCard = engineerCard.replace("{{role}}", employee.getRole());
+        engineerCard = engineerCard.replace("{{id}}", employee.getId());
+        engineerCard = engineerCard.replace("{{email}}", employee.getEmail());
+        engineerCard = engineerCard.replace("{{github}}", employee.getGithub());
+        return engineerCard;
+    } else if (employee.getRole() === "Intern") {
+        let internCard = fs.readFileSync("./html-templates/intern.html", "utf8");
+        internCard = internCard.replace("{{name}}", employee.getName());
+        internCard = internCard.replace("{{role}}", employee.getRole());
+        internCard = internCard.replace("{{id}}", employee.getId());
+        internCard = internCard.replace("{{email}}", employee.getEmail());
+        internCard = internCard.replace("{{school}}", employee.getSchool());
+        return internCard;
+    }
+}
+
+init();

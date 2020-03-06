@@ -1,23 +1,29 @@
 {
-  "name": "teamprofilegenerator",
+  "name": "unit10hw",
   "version": "1.0.0",
-  "description": "Homework",
-  "main": "index.js",
-  "dependencies": {
-    "inquirer": "^7.0.3"
+  "description": "OOP and testing for week 10 homework",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose test/*"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SteelersFan254/TeamProfileGenerator.git"
+    "url": "git+https://gnodithub.com/stevetrilogy/unit10hw.git"
   },
-  "author": "Ryan Borja",
+  "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SteelersFan254/TeamProfileGenerator/issues"
+    "url": "https://github.com/stevetrilogy/unit10hw/issues"
   },
-  "homepage": "https://github.com/SteelersFan254/TeamProfileGenerator#readme"
+  "homepage": "https://github.com/stevetrilogy/unit10hw#readme",
+  "dependencies": {
+    "inquirer": "^6.3.1"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
 }
